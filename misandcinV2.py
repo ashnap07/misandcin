@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Here is the first class used on this project which reprsent the side of the river:
-
-# In[294]:
+# In[56]:
 
 
 import copy
 #deep copy will be used later in successor generation
-
+import numpy as np
 #CLASS REPRESENT THE SIDE OF THE RIVER
 class Side:
     mis=0
@@ -51,19 +49,22 @@ class Side:
                 (self.mis==0 or(self.mis>=self.cin)))
 
 
-# now the second class which represent the state
-
-# In[295]:
+# In[77]:
 
 
 class State:
     left=None
     right=None
     #left and right reprsent both banks
-    onleft=True
+    
     #onleft reprsent the bot loction True for left and False for right
-    lastCross=None
+    onleft=True
+    
     #LastCross used in back tracking the solution path
+    lastCross=None
+    
+    #to determain depth of the node on the tree used in Itreative deepining search
+    depth=0
     
     #constructor
     def __init__(self,l=Side(),r=Side()):
@@ -93,14 +94,20 @@ class State:
             self.right -= group
             self.left += group
         self.onleft= not self.onleft
-    
-    
+        
+#     def copyop(self,op):
+#         self.left=op.left
+#         self.right=op.right
+#         self.onleft=op.onleft
+#         self.lastCross=op.lastCross
+#         self.depth=op.depth
         
 
 
-# In[296]:
+# In[84]:
 
 
+from collections import deque
 from timeit import default_timer as timer
 def BFS(m,n,b):
     
@@ -167,15 +174,14 @@ def BFS(m,n,b):
     print ("\n\n")
 
 start = timer()
-BFS(10,10,4)
+BFS(10,4,3)
 end = timer()
-print(end - start)
+print(end - start)    
 
 
-# In[305]:
+# In[85]:
 
 
-from collections import deque
 def IDS(m,n,b,k):
     #IMPORTANT I used deque here because its optimied with O(1) pop/push opretions both sides.
     initState=State(Side(m,n))
@@ -185,16 +191,13 @@ def IDS(m,n,b,k):
     prevs={}
     prevs[str(initState)]=True
     counter=0
-    while len(stack)>0 and k>=counter:
+    while len(stack)>0:
         current=stack[0]
         del stack[0]
         #call goal test to check for goal and stop loop if goal is found
         if current.goalTest():
             break
-        #edit.
-        #if not goal then add it to prevs dictionary 
-        #prevs[str(current)]=True
-        
+
         #now we should generate the seccassors to the current
         for m in range(b+1):
             s=1 if m==0 else 0
@@ -202,18 +205,19 @@ def IDS(m,n,b,k):
                 newcopy=copy.deepcopy(current)
                 newcopy.parent=current
                 newcopy.cross(Side(m,c))
-                if newcopy.allowed() and not ((str(newcopy)) in prevs):
+                newcopy.depth+=1
+                if newcopy.allowed() and not ((str(newcopy)) in prevs)and newcopy.depth<=k:
                     prevs[str(newcopy)]=True
                     stack.appendleft(newcopy)
-        counter+=1            
+    counter+=1            
     if not current.goalTest():
-        print("no solution so far...")
+        print("no solution so far...level",k)
         return False
     
     path = ""
     i=0
     while current is not None:
-        path = f" action:{current.lastCross}\n   {current}{path}"
+        path = f" action:{current.lastCross}\n   {current}{path}{current.depth}"
         try:
             current = current.parent
             i=i+1
@@ -224,7 +228,7 @@ def IDS(m,n,b,k):
     path = path[13:]
 
 
-    print ("Breadth-First Search Solution:")
+    print ("itrerative deepining Search Solution:")
     print (path)
     print ("solution cost : %s steps." % str(i))
     return True           
@@ -232,24 +236,16 @@ def IDS(m,n,b,k):
 
 start = timer()
 for k in range(100):
-    if IDS(10,10,4,k):
+    if IDS(3,3,2,k):
         break;
-
 end = timer()
 print(end - start)
-#we need to add depth to the node...
 
 
-# In[ ]:
+# In[86]:
 
 
-
-
-
-# In[ ]:
-
-
-
+print ("test")
 
 
 # In[ ]:
