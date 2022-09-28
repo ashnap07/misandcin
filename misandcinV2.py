@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[56]:
+# In[1]:
 
 
 import copy
@@ -49,7 +49,7 @@ class Side:
                 (self.mis==0 or(self.mis>=self.cin)))
 
 
-# In[77]:
+# In[2]:
 
 
 class State:
@@ -94,17 +94,9 @@ class State:
             self.right -= group
             self.left += group
         self.onleft= not self.onleft
-        
-#     def copyop(self,op):
-#         self.left=op.left
-#         self.right=op.right
-#         self.onleft=op.onleft
-#         self.lastCross=op.lastCross
-#         self.depth=op.depth
-        
 
 
-# In[84]:
+# In[190]:
 
 
 from collections import deque
@@ -120,18 +112,21 @@ def BFS(m,n,b):
     #saves previuos states to avoid repetition
     prevs={}
     prevs[str(initState)]=True
+    #Generated Nodes counter
+    Ncount=1
+    #expanded nodes counter
+    Ecount=0
+    #fringe size
+    fSize=1
     #start the seaerch
-    count=1
     while len(queue)>0:
         current=queue[0]
         del queue[0]
         #call goal test to check for goal and stop loop if goal is found
         if current.goalTest():
             break
-        #edit.
-        #if not goal then add it to prevs dictionary 
-        #prevs[str(current)]=True
-        
+        #add 1 to expanded nodes counter
+        Ecount+=1
         #now we should generate the seccassors to the current
         for m in range(b+1):
             s=1 if m==0 else 0
@@ -140,14 +135,11 @@ def BFS(m,n,b):
                 newcopy.parent=current
                 newcopy.cross(Side(m,c))
                 if newcopy.allowed() and not ((str(newcopy)) in prevs):
-                    count=count+1;
+                    Ncount+=1;
                     prevs[str(newcopy)]=True
                     queue.append(newcopy)
-        #print('nodes generated so far:',count)
-        #print('queue length ',len(queue))
-        #for i in range(len(queue)):
-        #    print(queue[i])
-    
+        fringSize=len(queue)
+        fSize=fSize if fSize>fringSize else fringSize
     if not current.goalTest():
         print("The problem can not be solved on this input")
         return
@@ -165,21 +157,23 @@ def BFS(m,n,b):
     #first one has no action so we skip this part.
     path = path[13:]
 
-
+    print('Number of Nodes generated: ',Ncount)
+    print('Number of Nodes expanded : ',Ecount)
+    print('The maximum fringe size  : ',fSize)
     print ("Breadth-First Search Solution:")
     print (path)
-    print ("solution cost : %s steps." % str(i))
-    #print len(path)
+    print ("solution cost : ",i)
+    
 
     print ("\n\n")
 
 start = timer()
-BFS(10,4,3)
+BFS(3,3,2)
 end = timer()
-print(end - start)    
+print(end - start) 
 
 
-# In[85]:
+# In[183]:
 
 
 def IDS(m,n,b,k):
@@ -187,37 +181,48 @@ def IDS(m,n,b,k):
     initState=State(Side(m,n))
     #insert intial state at the top of fringe(stack) 
     stack=deque([initState])
-    #saves previuos states to avoid repetition
-    prevs={}
-    prevs[str(initState)]=True
-    counter=0
+    #Generated Nodes counter
+    Ncount=1
+    #expanded nodes counter
+    Ecount=0
+    #fringe size
+    fSize=1
+    
+    
     while len(stack)>0:
         current=stack[0]
         del stack[0]
         #call goal test to check for goal and stop loop if goal is found
         if current.goalTest():
             break
-
+        if current.depth>=k:
+            continue
+        #add 1 to expanded nodes counter    
+        Ecount+=1
         #now we should generate the seccassors to the current
         for m in range(b+1):
             s=1 if m==0 else 0
             for c in range(s,b-m+1):
+                if m!=0 and c>m:
+                    continue
                 newcopy=copy.deepcopy(current)
                 newcopy.parent=current
                 newcopy.cross(Side(m,c))
                 newcopy.depth+=1
-                if newcopy.allowed() and not ((str(newcopy)) in prevs)and newcopy.depth<=k:
-                    prevs[str(newcopy)]=True
-                    stack.appendleft(newcopy)
-    counter+=1            
+                if newcopy.allowed() and ((str(newcopy))!=(str(current))):
+                    Ncount+=1;
+                    stack.appendleft(newcopy)  
+        fringSize=len(stack)
+        fSize=fSize if fSize>fringSize else fringSize           
     if not current.goalTest():
-        print("no solution so far...level",k)
+        #print("no solution so far...level",k)
+        #print('nodes generated so far:',Ncount)
         return False
     
     path = ""
     i=0
     while current is not None:
-        path = f" action:{current.lastCross}\n   {current}{path}{current.depth}"
+        path = f" action:{current.lastCross}\n   {current}{path}"
         try:
             current = current.parent
             i=i+1
@@ -228,9 +233,12 @@ def IDS(m,n,b,k):
     path = path[13:]
 
 
-    print ("itrerative deepining Search Solution:")
+    print('Number of Nodes generated: ',Ncount)
+    print('Number of Nodes expanded : ',Ecount)
+    print('The maximum fringe size  : ',fSize)
+    print ("Breadth-First Search Solution:")
     print (path)
-    print ("solution cost : %s steps." % str(i))
+    print ("solution cost : ",i)
     return True           
                     
 
@@ -242,10 +250,13 @@ end = timer()
 print(end - start)
 
 
-# In[86]:
+# In[191]:
 
 
-print ("test")
+BFS(3,3,2)
+for k in range(100):
+    if IDS(3,3,2,k):
+        break;
 
 
 # In[ ]:
