@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
 
 import copy
 #deep copy will be used later in successor generation
@@ -48,8 +43,6 @@ class Side:
         return (self.mis>=0 and self.cin>=0 and
                 (self.mis==0 or(self.mis>=self.cin)))
 
-
-# In[2]:
 
 
 class State:
@@ -168,7 +161,9 @@ def BFS(m,n,b):
     print ("\n\n")
 
 start = timer()
+
 BFS(3,3,2)
+
 end = timer()
 print(end - start) 
 
@@ -189,7 +184,8 @@ def IDS(m,n,b,k):
     fSize=1
     
     
-    while len(stack)>0:
+
+   while len(stack)>0:
         current=stack[0]
         del stack[0]
         #call goal test to check for goal and stop loop if goal is found
@@ -248,10 +244,6 @@ for k in range(100):
         break;
 end = timer()
 print(end - start)
-
-
-# In[191]:
-
 
 BFS(3,3,2)
 for k in range(100):
