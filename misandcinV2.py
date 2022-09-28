@@ -95,12 +95,6 @@ class State:
             self.left += group
         self.onleft= not self.onleft
         
-#     def copyop(self,op):
-#         self.left=op.left
-#         self.right=op.right
-#         self.onleft=op.onleft
-#         self.lastCross=op.lastCross
-#         self.depth=op.depth
         
 
 
