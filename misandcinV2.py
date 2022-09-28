@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[56]:
-
-
 import copy
 #deep copy will be used later in successor generation
 import numpy as np
@@ -47,7 +41,6 @@ class Side:
     def allowed(self):
         return (self.mis>=0 and self.cin>=0 and
                 (self.mis==0 or(self.mis>=self.cin)))
-
 
 # In[77]:
 
@@ -168,7 +161,7 @@ def BFS(m,n,b):
     print ("\n\n")
 
 start = timer()
-BFS(10,4,3)
+BFS(10,10,4)
 end = timer()
 print(end - start)    
 
@@ -185,6 +178,10 @@ def IDS(m,n,b,k):
     prevs={}
     prevs[str(initState)]=True
     counter=0
+
+    def allowedin(m,c):
+        return m>=0 and c>=0 and (m==0 or m>=c)
+        
     while len(stack)>0:
         current=stack[0]
         del stack[0]
@@ -196,12 +193,12 @@ def IDS(m,n,b,k):
         for m in range(b+1):
             s=1 if m==0 else 0
             for c in range(s,b-m+1):
+                
                 newcopy=copy.deepcopy(current)
                 newcopy.parent=current
                 newcopy.cross(Side(m,c))
                 newcopy.depth+=1
-                if newcopy.allowed() and not ((str(newcopy)) in prevs)and newcopy.depth<=k:
-                    prevs[str(newcopy)]=True
+                if newcopy.allowed():
                     stack.appendleft(newcopy)
     counter+=1            
     if not current.goalTest():
@@ -230,19 +227,10 @@ def IDS(m,n,b,k):
 
 start = timer()
 for k in range(100):
-    if IDS(3,3,2,k):
+    if IDS(10,10,4,k):
         break;
 end = timer()
 print(end - start)
-
-
-# In[86]:
-
-
-print ("test")
-
-
-# In[ ]:
 
 
 
