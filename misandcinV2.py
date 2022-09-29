@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
 
 import copy
 #deep copy will be used later in successor generation
@@ -44,6 +49,8 @@ class Side:
                 (self.mis==0 or(self.mis>=self.cin)))
 
 
+# In[2]:
+
 
 class State:
     left=None
@@ -66,7 +73,7 @@ class State:
         
     #rewritting str to print the State object when needed
     def __str__(self):
-        return f"{'L:'if self.onleft else 'R:'}left={str(self.left)}|right={str(self.right)}"
+        return f"{'L: 'if self.onleft else 'R: '}left={str(self.left)}|right={str(self.right)}"
 
         
     #calls allowd function on each side to check the constrains
@@ -89,7 +96,7 @@ class State:
         self.onleft= not self.onleft
 
 
-# In[190]:
+# In[3]:
 
 
 from collections import deque
@@ -140,7 +147,7 @@ def BFS(m,n,b):
     path = ""
     i=0
     while current is not None:
-        path = f" action:{current.lastCross}\n   {current}{path}"
+        path = f" action:{current.lastCross}\n{current}{path}"
         try:
             current = current.parent
             i=i+1
@@ -149,26 +156,23 @@ def BFS(m,n,b):
             
     #first one has no action so we skip this part.
     path = path[13:]
-
+    
+    print ("Breadth First Search Solution:")
     print('Number of Nodes generated: ',Ncount)
     print('Number of Nodes expanded : ',Ecount)
     print('The maximum fringe size  : ',fSize)
-    print ("Breadth-First Search Solution:")
-    print (path)
     print ("solution cost : ",i)
+    print(Ncount,"\t",Ecount,"\t",fSize,"\t",i,"\t")
+    print (path)
     
 
-    print ("\n\n")
-
 start = timer()
-
 BFS(3,3,2)
-
 end = timer()
 print(end - start) 
 
 
-# In[183]:
+# In[5]:
 
 
 def IDS(m,n,b,k):
@@ -184,8 +188,7 @@ def IDS(m,n,b,k):
     fSize=1
     
     
-
-   while len(stack)>0:
+    while len(stack)>0:
         current=stack[0]
         del stack[0]
         #call goal test to check for goal and stop loop if goal is found
@@ -218,7 +221,7 @@ def IDS(m,n,b,k):
     path = ""
     i=0
     while current is not None:
-        path = f" action:{current.lastCross}\n   {current}{path}"
+        path = f" action:{current.lastCross}\n{current}{path}"
         try:
             current = current.parent
             i=i+1
@@ -228,15 +231,14 @@ def IDS(m,n,b,k):
     #first one has no action so we skip this part.
     path = path[13:]
 
-
+    print ("Iterative Deepening Search Solution:")
     print('Number of Nodes generated: ',Ncount)
     print('Number of Nodes expanded : ',Ecount)
     print('The maximum fringe size  : ',fSize)
-    print ("Breadth-First Search Solution:")
-    print (path)
     print ("solution cost : ",i)
-    return True           
-                    
+    print(Ncount,"\t",Ecount,"\t",fSize,"\t",i,"\t")
+    print (path)
+    return True               
 
 start = timer()
 for k in range(100):
@@ -245,13 +247,24 @@ for k in range(100):
 end = timer()
 print(end - start)
 
-BFS(3,3,2)
+
+# In[7]:
+
+
+x,y,z=[3,3,2]
+BFS(x,y,z)
 for k in range(100):
-    if IDS(3,3,2,k):
+    if IDS(x,y,z,k):
         break;
 
 
-print("hello")
+# In[ ]:
+
+
+print(" BFS","\n","IDS")
+
+
+# In[ ]:
 
 
 
