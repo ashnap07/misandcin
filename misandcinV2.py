@@ -32,13 +32,13 @@ class Side:
     #rewritting str to print the Side object when needed
     def __str__(self):
         if self.mis<10 and self.cin<10:
-            return f"0{self.mis}:Mis|0{self.cin}:Cin"
+            return f"(0{self.mis}:0{self.cin})"
         if self.mis>=10 and self.cin<10:
-            return f"{self.mis}:Mis|0{self.cin}:Cin"
+            return f"({self.mis}:0{self.cin})"
         if self.mis<10 and self.cin>=10:
-            return f"0{self.mis}:Mis|{self.cin}:Cin"
+            return f"(0{self.mis}:{self.cin})"
         
-        return f"{self.mis}:Mis|{self.cin}:Cin"
+        return f"({self.mis}:{self.cin})"
     
     #checks if this side is allowed under the constrains
     #1.for both banks and the boat, that the missionaries present cannot be
@@ -49,7 +49,7 @@ class Side:
                 (self.mis==0 or(self.mis>=self.cin)))
 
 
-# In[2]:
+# In[21]:
 
 
 class State:
@@ -73,7 +73,7 @@ class State:
         
     #rewritting str to print the State object when needed
     def __str__(self):
-        return f"{'L: 'if self.onleft else 'R: '}left={str(self.left)}|right={str(self.right)}"
+        return f"{'Left 'if self.onleft else 'Right'}{str(self.left)}|  |{str(self.right)}"
 
         
     #calls allowd function on each side to check the constrains
@@ -96,7 +96,7 @@ class State:
         self.onleft= not self.onleft
 
 
-# In[3]:
+# In[27]:
 
 
 from collections import deque
@@ -106,7 +106,7 @@ def BFS(m,n,b):
     initState=State(Side(m,n))
     if not initState.allowed():
         print("No Solution, your input is not correct since m<c.")
-        return
+        return 0
     #insert intial state in fringe(queue)
     queue=deque([initState])
     #saves previuos states to avoid repetition
@@ -142,12 +142,12 @@ def BFS(m,n,b):
         fSize=fSize if fSize>fringSize else fringSize
     if not current.goalTest():
         print("The problem can not be solved on this input")
-        return
+        return 0
         
     path = ""
     i=0
     while current is not None:
-        path = f" action:{current.lastCross}\n{current}{path}"
+        path = f" action:{current.lastCross} to {str(current)[0:5]}\n{str(current)[5:]}{path}"
         try:
             current = current.parent
             i=i+1
@@ -155,7 +155,7 @@ def BFS(m,n,b):
             current = None
             
     #first one has no action so we skip this part.
-    path = path[13:]
+    path = path[20:]
     
     print ("Breadth First Search Solution:")
     print('Number of Nodes generated: ',Ncount)
@@ -164,18 +164,20 @@ def BFS(m,n,b):
     print ("solution cost : ",i)
     print(Ncount,"\t",Ecount,"\t",fSize,"\t",i,"\t")
     print (path)
-    
+    return i
 
 start = timer()
-BFS(3,3,2)
+BFS(20,20,4)
 end = timer()
 print(end - start) 
 
 
-# In[5]:
+# In[56]:
 
 
 def IDS(m,n,b,k):
+    if k == 0:
+        print("The problem can not be solved on this input")
     #IMPORTANT I used deque here because its optimied with O(1) pop/push opretions both sides.
     initState=State(Side(m,n))
     #insert intial state at the top of fringe(stack) 
@@ -208,20 +210,18 @@ def IDS(m,n,b,k):
                 newcopy.parent=current
                 newcopy.cross(Side(m,c))
                 newcopy.depth+=1
-                if newcopy.allowed() and ((str(newcopy))!=(str(current))):
+                if newcopy.allowed() :
                     Ncount+=1;
                     stack.appendleft(newcopy)  
         fringSize=len(stack)
-        fSize=fSize if fSize>fringSize else fringSize           
+        fSize=fSize if fSize>fringSize else fringSize
     if not current.goalTest():
-        #print("no solution so far...level",k)
-        #print('nodes generated so far:',Ncount)
         return False
     
     path = ""
     i=0
     while current is not None:
-        path = f" action:{current.lastCross}\n{current}{path}"
+        path =  f" action:{current.lastCross} to {str(current)[0:5]}\n{str(current)[5:]}{path}"
         try:
             current = current.parent
             i=i+1
@@ -229,7 +229,7 @@ def IDS(m,n,b,k):
             current = None
             
     #first one has no action so we skip this part.
-    path = path[13:]
+    path = path[20:]
 
     print ("Iterative Deepening Search Solution:")
     print('Number of Nodes generated: ',Ncount)
@@ -242,20 +242,19 @@ def IDS(m,n,b,k):
 
 start = timer()
 for k in range(100):
-    if IDS(3,3,2,k):
+    if IDS(1,1,2,k):
         break;
 end = timer()
 print(end - start)
 
 
-# In[7]:
+# In[57]:
 
 
-x,y,z=[3,3,2]
-BFS(x,y,z)
-for k in range(100):
-    if IDS(x,y,z,k):
-        break;
+x,y,z=[20,20,3]
+c=BFS(x,y,z)
+print(c)
+IDS(x,y,z,c)
 
 
 # In[ ]:
