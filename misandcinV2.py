@@ -73,7 +73,7 @@ class State:
         
     #rewritting str to print the State object when needed
     def __str__(self):
-        return f"{'Left 'if self.onleft else 'Right'}{str(self.left)}|  |{str(self.right)}"
+        return f"{'Left 'if self.onleft else 'Right'}{str(self.left)}| |{str(self.right)}"
 
         
     #calls allowd function on each side to check the constrains
@@ -106,7 +106,7 @@ def BFS(m,n,b):
     initState=State(Side(m,n))
     if not initState.allowed():
         print("No Solution, your input is not correct since m<c.")
-        return 0
+        return 0 , "No Solution on this input"
     #insert intial state in fringe(queue)
     queue=deque([initState])
     #saves previuos states to avoid repetition
@@ -142,7 +142,7 @@ def BFS(m,n,b):
         fSize=fSize if fSize>fringSize else fringSize
     if not current.goalTest():
         print("The problem can not be solved on this input")
-        return 0
+        return 0,"No Solution on this input"
         
     path = ""
     i=0
@@ -156,20 +156,15 @@ def BFS(m,n,b):
             
     #first one has no action so we skip this part.
     path = path[20:]
-    
-    print ("Breadth First Search Solution:")
-    print('Number of Nodes generated: ',Ncount)
-    print('Number of Nodes expanded : ',Ecount)
-    print('The maximum fringe size  : ',fSize)
-    print ("solution cost : ",i)
-    print(Ncount,"\t",Ecount,"\t",fSize,"\t",i,"\t")
-    print (path)
-    return i
-
-start = timer()
-BFS(20,20,4)
-end = timer()
-print(end - start) 
+    res=""
+    res=res+"\n"+("Breadth First Search Solution:")
+    res=res+"\n"+'Number of Nodes generated: '+str(Ncount)
+    res=res+"\n"+'Number of Nodes expanded : '+str(Ecount)
+    res=res+"\n"+'The maximum fringe size  : '+str(fSize)
+    res=res+"\n"+ "solution cost : "+str(i)
+    #print(Ncount,"\t",Ecount,"\t",fSize,"\t",i,"\t")
+    res=res+"\n"+ str(path)
+    return i,res
 
 
 # In[56]:
@@ -178,6 +173,7 @@ print(end - start)
 def IDS(m,n,b,k):
     if k == 0:
         print("The problem can not be solved on this input")
+        return False , "No solution on this input"
     #IMPORTANT I used deque here because its optimied with O(1) pop/push opretions both sides.
     initState=State(Side(m,n))
     #insert intial state at the top of fringe(stack) 
@@ -211,12 +207,12 @@ def IDS(m,n,b,k):
                 newcopy.cross(Side(m,c))
                 newcopy.depth+=1
                 if newcopy.allowed() :
-                    Ncount+=1;
+                    Ncount+=1
                     stack.appendleft(newcopy)  
         fringSize=len(stack)
         fSize=fSize if fSize>fringSize else fringSize
     if not current.goalTest():
-        return False
+        return False, "No solution on this input"
     
     path = ""
     i=0
@@ -230,40 +226,39 @@ def IDS(m,n,b,k):
             
     #first one has no action so we skip this part.
     path = path[20:]
+    
+    res=""
+    res=res+"\n"+ "Iterative Deepening Search Solution:"
+    res=res+"\n"+'Number of Nodes generated: '+str(Ncount)
+    res=res+"\n"+'Number of Nodes expanded : '+str(Ecount)
+    res=res+"\n"+'The maximum fringe size  : '+str(fSize)
+    res=res+"\n"+ "solution cost : "+str(i)
+    #print(Ncount,"\t",Ecount,"\t",fSize,"\t",i,"\t")
+    res=res+"\n"+ str(path)
+    return True ,res              
 
-    print ("Iterative Deepening Search Solution:")
-    print('Number of Nodes generated: ',Ncount)
-    print('Number of Nodes expanded : ',Ecount)
-    print('The maximum fringe size  : ',fSize)
-    print ("solution cost : ",i)
-    print(Ncount,"\t",Ecount,"\t",fSize,"\t",i,"\t")
-    print (path)
-    return True               
-
-start = timer()
-for k in range(100):
-    if IDS(1,1,2,k):
-        break;
-end = timer()
-print(end - start)
-
-
-# In[57]:
+# start = timer()
+# for k in range(100):
+#     if IDS(1,1,2,k):
+#         break;
+# end = timer()
+# print(end - start)
 
 
-x,y,z=[20,20,3]
-c=BFS(x,y,z)
-print(c)
-IDS(x,y,z,c)
+    
+
+def bfsids(x,y,z):
+    c,r1=BFS(x,y,z)
+    b,r2=IDS(x,y,z,c)
+    return r1,r2
 
 
-# In[ ]:
 
 
-print(" BFS","\n","IDS")
 
 
-# In[ ]:
+
+
 
 
 
